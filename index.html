@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles/style.css" />
+    <script src="scripts/script.js" defer></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+    />
+    <title>DevNotes</title>
+  </head>
+  <body>
+    <header>
+      <h1>DevNotes</h1>
+      <div id="search-container">
+        <i class="bi bi-search"></i>
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Busque por sua nota"
+        />
+      </div>
+      <button id="export-notes"> <!--Cria o arquivo de CSV-->
+        Exportar CSV <i class="bi bi-download"></i>
+      </button>
+    </header>
+    <div id="add-note-container">
+      <!--Elemento 2: Onde se encontram os conteúdos dentro das notas--><input type="text" id="note-content"  placeholder="O que deseja anotar?" />
+      <!--Elemento 3: Onde adiciona as notas novas--><button class="add-note"><i class="bi bi-plus-lg"></i></button>
+    </div>
+    <div id="notes-container"> <!--Elemento 1: Onde se encontram as notas-->
+      <div class="note fixed">
+        <textarea placeholder="Adicione algum texto"></textarea>
+        <i class="bi bi-pin"></i>
+        <i class="bi bi-x-lg"></i>
+        <i class="bi bi-file-earmark-plus"></i>
+      </div>
+    </div>
+  </body>
+</html>
