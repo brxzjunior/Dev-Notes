@@ -5,106 +5,150 @@ const noteInput = document.querySelector("#note-content");
 
 const addNoteBtn = document.querySelector(".add-note");
 
-
 //Functions
-function showNotes(){
-    cleanNotes();
+function showNotes() {
+  cleanNotes();
 
-    getNotes().forEach((note) => {
-        const noteElement = createNote(note.id, note.content, note.fixed);
-        notesContainer.appendChild(noteElement);
-    });
-};
-
-function cleanNotes(){
-    notesContainer.replaceChildren([]);
+  getNotes().forEach((note) => {
+    const noteElement = createNote(note.id, note.content, note.fixed);
+    notesContainer.appendChild(noteElement);
+  });
 }
 
+function cleanNotes() {
+  notesContainer.replaceChildren([]);
+}
 
 function addNote() {
-    const notes = getNotes();
+  const notes = getNotes();
 
-    const noteObject = {
-        id: generateId(),
-        content: noteInput.value,
-        fixed: false,
-    };
+  const noteObject = {
+    id: generateId(),
+    content: noteInput.value,
+    fixed: false,
+  };
 
-    const noteElement = createNote(noteObject.id, noteObject.content);
-    
-    notesContainer.appendChild(noteElement);
-    
-    notes.push(noteObject);
+  const noteElement = createNote(noteObject.id, noteObject.content);
 
-    saveNotes(notes);
+  notesContainer.appendChild(noteElement);
 
-    noteInput.value = "";
+  notes.push(noteObject);
+
+  saveNotes(notes);
+
+  noteInput.value = "";
 }
 
 function generateId() {
-    return Date.now(); 
+  return Date.now();
 }
 
-function createNote(id, content, fixed){
-        const element = document.createElement("div");
+function createNote(id, content, fixed) {
+  const element = document.createElement("div");
 
-        element.classList.add("note");
+  element.classList.add("note");
 
-        const textarea = document.createElement("textarea");
+  const textarea = document.createElement("textarea");
 
-        textarea.value = content;
+  textarea.value = content;
 
-        textarea.placeholder = "Adicione algum texto...";
+  textarea.placeholder = "Adicione algum texto...";
 
-        element.appendChild(textarea);
+  element.appendChild(textarea);
 
-        const pinIcon = document.createElement("i");
+  //pinIcon
+  const pinIcon = document.createElement("i");
 
-        pinIcon.classList.add(...["bi","bi-pin"]);
+  pinIcon.classList.add(...["bi", "bi-pin"]);
 
-        element.appendChild(pinIcon);
+  element.appendChild(pinIcon);
 
-        if(fixed) {
-            element.classList.add("fixed");
-        };
+  //deleteIcon
 
-        //Eventos do elemento
-        element.querySelector(".bi-pin").addEventListener("click", () => {
-            toggleFixNote(id);
-        });
+  const deleteIcon = document.createElement("i");
 
-        return element;
-};
+  deleteIcon.classList.add(...["bi", "bi-x-lg"]);
 
-function toggleFixNote(id){
-    const notes = getNotes();
+  element.appendChild(deleteIcon);
 
-    const targetNote = notes.filter((note) => note.id === id)[0];
- 
-    targetNote.fixed = !targetNote.fixed;
+  //duplicateIcon
+  const duplicateIcon = document.createElement("i");
 
-    saveNotes(notes);
+  duplicateIcon.classList.add(...["bi", "bi-file-earmark-plus"]);
 
-    showNotes();
-};
+  element.appendChild(duplicateIcon);
+
+  if (fixed) {
+    element.classList.add("fixed");
+  }
+
+  //Eventos do elemento
+  element.querySelector(".bi-pin").addEventListener("click", () => {
+    toggleFixNote(id);
+  });
+
+  element.querySelector(".bi-x-lg").addEventListener("click", () => {
+    deleteNote(id, element);
+  });
+
+  element
+    .querySelector(".bi-file-earmark-plus")
+    .addEventListener("click", () => {
+      duplicateNote(id);
+    });
+
+  return element;
+}
+
+function toggleFixNote(id) {
+  const notes = getNotes();
+
+  const targetNote = notes.filter((note) => note.id === id)[0];
+
+  targetNote.fixed = !targetNote.fixed;
+  saveNotes(notes);
+  showNotes();
+}
+
+function deleteNote(id, element) {
+  const notes = getNotes().filter((note) => note.id !== id);
+  saveNotes(notes);
+  notesContainer.removeChild(element);
+}
+
+function duplicateNote(id) {
+  const notes = getNotes();
+  const targetNote = notes.filter((note) => note.id === id)[0];
+  const noteObject = {
+    id: generateId(),
+    content: targetNote.content,
+    fixed: false,
+  };
+  const noteElement = createNote(
+    noteObject.id,
+    noteObject.content,
+    noteObject.fixed
+  );
+  notesContainer.appendChild(noteElement);
+  notes.push(noteObject);
+  saveNotes(notes);
+}
 
 //LocalStorage
-function getNotes(){
-    const notes = JSON.parse(localStorage.getItem("notes") || "[]");
-    
-    const orderedNotes = notes.sort((a, b) => a.fixed > b.fixed ? -1 : 1);
-    
-    return orderedNotes;
-};
+function getNotes() {
+  const notes = JSON.parse(localStorage.getItem("notes") || "[]");
 
+  const orderedNotes = notes.sort((a, b) => (a.fixed > b.fixed ? -1 : 1));
 
-function saveNotes(notes){
-    localStorage.setItem("notes", JSON.stringify(notes));
-};
+  return orderedNotes;
+}
 
+function saveNotes(notes) {
+  localStorage.setItem("notes", JSON.stringify(notes));
+}
 
 //Events
-addNoteBtn.addEventListener("click", ()=> addNote());
+addNoteBtn.addEventListener("click", () => addNote());
 
 //Inicialization
 showNotes();
